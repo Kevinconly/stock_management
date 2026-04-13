@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT; // here you ise else port when isn't in .env file
 const conn = require("./db/connection");
 
 //IMPORT ROUTES
