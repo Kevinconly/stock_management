@@ -1,5 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
-import api from "../api/client";
+import React, { useMemo } from "react";
 
 const recentActivity = [
   { id: 1, title: "Premium Petrol updated", meta: "Stock adjusted to 9" },
@@ -7,42 +6,17 @@ const recentActivity = [
   { id: 3, title: "Gasoil reorder requested", meta: "ETA 5 days" },
 ];
 
+const demoProducts = [
+  { id: 1, name: "Premium Petrol", quantity: 9 },
+  { id: 2, name: "Lubricant Oil", quantity: 0 },
+  { id: 3, name: "Diesel", quantity: 18 },
+  { id: 4, name: "Coolant", quantity: 3 },
+  { id: 5, name: "Brake Fluid", quantity: 6 },
+];
+
 export default function Dashboard() {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    let active = true;
-    const fetchProducts = async () => {
-      setLoading(true);
-      setError("");
-      try {
-        const res = await api.get("/products");
-        if (active) {
-          setProducts(res.data?.data || []);
-        }
-      } catch (err) {
-        if (active) {
-          const message =
-            err?.response?.data?.message ||
-            "Unable to load dashboard data. Please try again.";
-          setError(message);
-        }
-      } finally {
-        if (active) {
-          setLoading(false);
-        }
-      }
-    };
-    fetchProducts();
-    return () => {
-      active = false;
-    };
-  }, []);
-
   const derived = useMemo(() => {
-    const normalized = products.map((item) => {
+    const normalized = demoProducts.map((item) => {
       const quantity = Number(item.quantity ?? item.stock ?? 0);
       return {
         id: item.id,
@@ -71,7 +45,7 @@ export default function Dashboard() {
       outOfStock,
       lowStockItems,
     };
-  }, [products]);
+  }, []);
 
   const stats = [
     { label: "Total Products", value: derived.total, trend: "Live count" },
@@ -119,12 +93,6 @@ export default function Dashboard() {
             ))}
           </div>
 
-          {error ? (
-            <div className="rounded-2xl border border-rose-400/40 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
-              {error}
-            </div>
-          ) : null}
-
           <div className="grid gap-6 lg:grid-cols-3">
             <div className="rounded-2xl border border-white/10 bg-white/5 p-5 lg:col-span-2">
               <div className="flex items-center justify-between">
@@ -157,11 +125,7 @@ export default function Dashboard() {
                 Low Stock
               </h2>
               <div className="mt-4 space-y-3">
-                {loading ? (
-                  <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-xs text-slate-400">
-                    Loading inventory...
-                  </div>
-                ) : derived.lowStockItems.length < 1 ? (
+                {derived.lowStockItems.length < 1 ? (
                   <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-xs text-slate-400">
                     All products are well stocked.
                   </div>

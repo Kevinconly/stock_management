@@ -1,43 +1,17 @@
-import React, { useEffect, useMemo, useState } from "react";
-import api from "../api/client";
+import React, { useMemo } from "react";
+
+const demoProducts = [
+  { id: 1, name: "Premium Petrol", quantity: 9 },
+  { id: 2, name: "Lubricant Oil", quantity: 0 },
+  { id: 3, name: "Diesel", quantity: 18 },
+  { id: 4, name: "Coolant", quantity: 3 },
+  { id: 5, name: "Brake Fluid", quantity: 6 },
+];
 
 export default function Products() {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    let active = true;
-    const fetchProducts = async () => {
-      setLoading(true);
-      setError("");
-      try {
-        const res = await api.get("/products");
-        if (active) {
-          setProducts(res.data?.data || []);
-        }
-      } catch (err) {
-        if (active) {
-          const message =
-            err?.response?.data?.message ||
-            "Unable to load products. Please try again.";
-          setError(message);
-        }
-      } finally {
-        if (active) {
-          setLoading(false);
-        }
-      }
-    };
-    fetchProducts();
-    return () => {
-      active = false;
-    };
-  }, []);
-
   const normalized = useMemo(
     () =>
-      products.map((item) => {
+      demoProducts.map((item) => {
         const quantity = Number(item.quantity ?? item.stock ?? 0);
         let status = "In stock";
         if (quantity <= 0) {
@@ -52,7 +26,7 @@ export default function Products() {
           status,
         };
       }),
-    [products]
+    []
   );
 
   const total = normalized.length;
@@ -105,12 +79,6 @@ export default function Products() {
             </div>
           </div>
 
-          {error ? (
-            <div className="rounded-2xl border border-rose-400/40 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
-              {error}
-            </div>
-          ) : null}
-
           <div className="overflow-hidden rounded-2xl border border-white/10">
             <table className="w-full border-collapse text-left text-sm">
               <thead className="bg-white/10 text-xs uppercase tracking-[0.2em] text-slate-300">
@@ -123,16 +91,7 @@ export default function Products() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/10 text-slate-200">
-                {loading ? (
-                  <tr>
-                    <td
-                      className="px-5 py-8 text-center text-sm text-slate-400"
-                      colSpan={5}
-                    >
-                      Loading products...
-                    </td>
-                  </tr>
-                ) : normalized.length < 1 ? (
+                {normalized.length < 1 ? (
                   <tr>
                     <td
                       className="px-5 py-8 text-center text-sm text-slate-400"

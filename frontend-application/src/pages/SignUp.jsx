@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import api from "../api/client";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function SignUp() {
@@ -9,27 +8,18 @@ export default function SignUp() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
-  const handleSignUp = async (e) => {
+  const handleSignUp = (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
-    try {
-      const res = await api.post("/auth/signup", {
-        name,
-        email,
-        password,
-      });
-      if (res.status === 201) {
-        setSuccess("Account created. You can sign in now.");
-        setTimeout(() => navigate("/login"), 800);
-      }
-    } catch (err) {
-      const message =
-        err?.response?.data?.message ||
-        "Unable to create account. Please try again.";
-      setError(message);
+    if (!name || !email || !password) {
+      setError("Fill in your name, email, and password to continue.");
+      return;
     }
+
+    setSuccess("Account created locally. You can sign in now.");
+    setTimeout(() => navigate("/login"), 800);
   };
 
   return (

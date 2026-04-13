@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import api from "../api/client";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
@@ -8,26 +7,16 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
     setError("");
 
-    try {
-      const res = await api.post("/auth/login", {
-        email: email,
-        password: password,
-      });
-      if (res.status === 200) {
-        if (res.data?.data?.token) {
-          localStorage.setItem("authToken", res.data.data.token);
-        }
-        navigate("/");
-      }
-    } catch (err) {
-      const message =
-        err?.response?.data?.message || "Unable to log in. Please try again.";
-      setError(message);
+    if (!email || !password) {
+      setError("Enter your email and password to continue.");
+      return;
     }
+
+    navigate("/");
   };
 
   return (
