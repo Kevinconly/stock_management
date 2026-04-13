@@ -1,18 +1,19 @@
 require("dotenv").config();
 const mysql = require("mysql2");
 
+const requireEnv = (key) => {
+  const value = process.env[key];
+  if (!value) {
+    throw new Error(`Missing required env var: ${key}`);
+  }
+  return value;
+};
+
 const conn = mysql.createConnection({
-  host: "localhost",
-  user: "admin",
-  password: "password123",
-  database: "mystock",
-  connectionLimit: 12,
-  waitForConnections: true,
+  host: requireEnv("DB_HOST"),
+  user: requireEnv("DB_USERNAME"),
+  password: requireEnv("DB_PASSWORD"),
+  database: requireEnv("DB_NAME"),
 });
 
-if(conn == false){
-  console.log('Failed to connect to database')
-}else{
-  console.log('connection esatablished')
-}
 module.exports = conn;
