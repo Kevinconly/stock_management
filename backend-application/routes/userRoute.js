@@ -133,4 +133,26 @@ route.put("/:id", (req, res) => {
   });
 });
 
+route.delete("/:id", (req, res) => {
+  const { id } = req.params;
+  const checkTheUserValidity = "SELECT * FROM users WHERE user_id = ?";
+  conn.query(checkTheUserValidity, [id], (err, result) => {
+    if (err) {
+      res.status(500).json({ message: "Failed to find user", err });
+    } else if (result.length < 1) {
+      res.status(400).json({ message: "We couldn't find user with this id" });
+    } else {
+      const delete_user_query = "DELETE FROM users WHERE user_id =?";
+      conn.query(delete_user_query, [id], (err, result) => {
+        if (err) {
+          res.status(500).json({ message: "Failed to delete user", err });
+        } else {
+          res
+            .status(200)
+            .json({ message: `User with id '${id}' was successfully deleted` });
+        }
+      });
+    }
+  });
+});
 module.exports = route;
