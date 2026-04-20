@@ -113,7 +113,7 @@ route.delete("/:id", (req, res) => {
       res.status(500).json({ message: "Internal server error", err });
     } else {
       res
-        .status(200)
+        .status(204)
         .json({ message: `The user with id:'${id}' deleted successfully` });
     }
   });

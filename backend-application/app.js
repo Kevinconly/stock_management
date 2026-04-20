@@ -9,12 +9,14 @@ const conn = require("./db/connection");
 const User = require("./routes/userRoute");
 const auth = require("./routes/Auth")
 const productRoute = require('./routes/productRoute')
+const stockOut = require('./routes/stock_outRoute')
 
 app.use(express.json());
 app.use(cors());
 app.use("/users", User);
 app.use("/auth", auth)
 app.use('/product', productRoute)
+app.use('/stock_out', stockOut)
 
 app.listen(PORT, console.log(`app is live at http://localhost:${PORT}`));
 
